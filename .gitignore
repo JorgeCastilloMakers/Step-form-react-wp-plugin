@@ -1,0 +1,88 @@
+###################################
+# General ignore patterns
+###################################
+
+build/
+obj/
+*.o
+Debug*/
+Release*/
+*.mode*
+*.app/
+*.pyc
+.svn/
+.env
+.env.local
+composer.lock
+
+###################################
+# OS Specific
+###################################
+
+# Linux
+*~
+
+# OSX
+**/.DS_Store
+.DS_Store
+*.swp
+*~.nib
+
+# Thumbnails
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+###################################
+# Node.js
+###################################
+
+**/node_modules
+lib-cov
+lcov.info
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+pids
+logs
+results
+build
+.grunt
+/vendor/
+npm-debug.log
+yarn-error.log
+
+###################################
+# Laravel
+###################################
+bootstrap/compiled.php
+app/storage/
+public/storage
+public/hot
+public_html/storage
+public_html/hot
+storage/api-docs
+storage/*.key
+Homestead.yaml
+Homestead.json
+
+###################################
+# App Specific 
+###################################
+sync.txt
+storage/api-docs
+storage/*.key
+Homestead.yaml
+Homestead.json
+/.vagrant
+.phpunit.result.cache
+.vscode/
+./public
+public
+
