@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import path from "path";
 import react from "@vitejs/plugin-react";
+import * as fs from 'fs';
 
 export default({ mode }) => {
   process.env = {...process.env, ...loadEnv(mode, process.cwd())};
@@ -41,10 +42,16 @@ export default({ mode }) => {
             name: "load-js-files-as-tsx",
             setup(build) {
               build.onLoad({ filter: /src\/.*\.js$/ }, async (args) => {
-                return {
-                  loader: "tsx",
-                  contents: await fs.readFile(args.path, "utf8"),
-                };
+                try {
+                  const contents = await fs.promises.readFile(args.path, 'utf8');
+                  return {
+                    loader: 'tsx',
+                    contents,
+                  };
+                } catch (error) {
+                  console.error('Error reading file:', error);
+                  return null;
+                }
               });
             },
           },

@@ -2,7 +2,7 @@
 
 # Instructions
 
-Clone this repository into **wp-content/plugins**, then, in the `React Vite + Typescript` folder run `npm install`.
+Clone this repository into **wp-content/plugins**, then, in the `bamuba-form-react` folder run `npm install`.
 
 Activate the plugin and create a page, on the page add a html block with `<div id="my-react-app"></div>`.
 

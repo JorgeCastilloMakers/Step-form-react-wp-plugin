@@ -1,14 +1,23 @@
 <?php
 
 if (!class_exists('WP_React_Config')){
+    /**
+     * Clase para configurar la integración de React en WordPress
+     */
     class WP_React_Config {
+        /**
+         * Constructor de la clase
+         */
         public function __construct()
         {
-            add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-            add_filter('script_loader_tag', [$this, 'add_type_atribbute'], 10, 3);
+            add_action('wp_enqueue_scripts', [$this, 'load_assets']);
+            add_filter('script_loader_tag', [$this, 'add_type_attribute'], 10, 3);
             add_action('wp_head', [$this, 'add_manifest']);
         }
 
+        /**
+         * Carga los assets de React
+         */
         public function load_assets()
         {
             wp_enqueue_style('react-style', plugin_dir_url(__FILE__) . '../public/assets/main.css');
