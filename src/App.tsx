@@ -264,7 +264,7 @@ function App() {
           <motion.div 
             key="step-2"
             variants={itemVariants}
-            className="w-full min-w-[500px] mx-auto"
+            className="w-full md:min-w-[500px] mx-auto"
           >
             <h2 className="text-2xl font-semibold mb-6">Ingrese su número de DNI:</h2>
             <div className="mb-6">
@@ -302,7 +302,7 @@ function App() {
           <motion.div 
             key="step-3"
             variants={itemVariants}
-            className="w-full min-w-[500px] mx-auto"
+            className="w-full md:min-w-[500px] mx-auto"
           >
             <h2 className="text-2xl font-semibold mb-6">Con su correo electrónico:</h2>
             <div className="mb-6">
