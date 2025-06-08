@@ -1,36 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary: #1a365d;
+  --primary-light: #2c5282;
+  --secondary: #2b6cb0;
+  --accent: #3182ce;
+  --light: #ebf8ff;
+  --gray: #4a5568;
+  --light-gray: #e2e8f0;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  color: var(--gray);
+  background-color: #f7fafc;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+  background-image: url(https://bamuba.tur.ar/wp-content/uploads/2025/04/shot-by-cerqueira-cCkheI30Jd4-unsplash-scaled.jpg);
+  background-position: center;
+  background-size: cover;
+}
+
+/* Form Container */
+.form-container {
+  backdrop-filter: blur(5px);
+  background-color: #ffffffc7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Header */
+.form-header {
   text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  padding-bottom: 1rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.form-header h1 {
+  color: var(--primary);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.form-header p {
+  color: var(--secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.form-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--secondary));
+  border-radius: 2px;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+#form-contract input[type="text"], #form-contract input[type="email"] {
+  border: none;
+  border-bottom: 1px solid #e9e9e9;
+  background-color: #ffffff6e;
+}
+#form-contract input[type="text"]:focus, #form-contract input[type="email"]:focus {
+  outline: none;
+  outline-color: transparent;
+}
+#form-contract input[type="text"]:focus-visible, #form-contract input[type="email"]:focus-visible {
+  border-bottom: 1px solid #604A40;
+}
+#form-contract button {
+  background-color: #604A40;
+  color: #ffffff;
+  border: none;
+  border-radius: .5rem;
+}
+#form-contract button:hover {
+  background-color: #4a362f;
+}
+  
+/* Checkbox Styles */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-container input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 20px;
+  width: 20px;
+  background-color: var(--white);
+  border: 2px solid var(--light-gray);
+  border-radius: 4px;
+  margin-right: 10px;
+  transition: all 0.2s ease;
+}
+
+.checkbox-container:hover .checkmark {
+  border-color: var(--accent);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Terms and Conditions */
+.terms-container {
+  background-color: #f0f9ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+  border: 1px solid #bae6fd;
+}
+
+.terms-content {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--gray);
+}
+
+.terms-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.terms-link:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+/* Signature Section */
+.signature-section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--light-gray);
+}
+
+.signature-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.signature-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.signature-line {
+  width: 100%;
+  height: 1px;
+  background-color: var(--light-gray);
+  margin-top: 2rem;
+  position: relative;
+}
+
+.signature-line::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 80px;
+  height: 1px;
+  background-color: var(--accent);
+}
+
+/* Submit Button */
+.submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1.5rem;
+    margin: 1rem;
+    width: auto;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .form-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .signature-fields {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-container {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .card {
