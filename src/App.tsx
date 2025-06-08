@@ -3,6 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
 import SignatureCanvas from 'react-signature-canvas';
 
+// Componente Loader
+const Loader = () => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-xl flex flex-col items-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#604A40] mb-4"></div>
+      <p className="text-lg font-medium">Enviando formulario...</p>
+    </div>
+  </div>
+);
+
 // Asegurarse de que React esté en el ámbito global
 declare global {
   namespace JSX {
@@ -49,7 +59,11 @@ const serviciosOptions = [
 ];
 
 function App() {
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  
+
+  
   const [formData, setFormData] = useState<FormData>({
     nombreApellido: '',
     dni: '',
@@ -110,6 +124,7 @@ function App() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
       let apiUrl = '/wp-json';
@@ -165,6 +180,8 @@ function App() {
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
       alert(`Ocurrió un error al enviar el formulario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
