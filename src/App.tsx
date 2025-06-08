@@ -1,5 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
+import SignatureCanvas from 'react-signature-canvas';
+
+// Asegurarse de que React esté en el ámbito global
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: any;
+    }
+  }
+}
+
+// Configuración de animaciones
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+      duration: 0.3
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    transition: { duration: 0.3 } 
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.3 } 
+  }
+};
 
 type FormData = {
   nombreApellido: string;
@@ -40,6 +79,33 @@ function App() {
     aclaracion: '',
     fechaLugar: `${new Date().toLocaleDateString('es-AR')}, Buenos Aires`
   });
+  const signatureRef = useRef<any>(null);
+  const [isSignatureEmpty, setIsSignatureEmpty] = useState(true);
+
+  const handleEnd = useCallback(() => {
+    if (signatureRef.current) {
+      const isEmpty = signatureRef.current.isEmpty();
+      setIsSignatureEmpty(isEmpty);
+      if (!isEmpty) {
+        const signatureData = signatureRef.current.toDataURL();
+        setFormData(prev => ({
+          ...prev,
+          firma: signatureData
+        }));
+      }
+    }
+  }, []);
+
+  const handleClear = useCallback(() => {
+    if (signatureRef.current) {
+      signatureRef.current.clear();
+      setIsSignatureEmpty(true);
+      setFormData(prev => ({
+        ...prev,
+        firma: ''
+      }));
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -68,11 +134,56 @@ function App() {
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
-  const renderStep = () => {
+  // const isStepValid = () => {
+  //   switch (currentStep) {
+  //     case 1:
+  //       return !!formData.nombreApellido.trim();
+  //     case 2:
+  //       return !!formData.dni.trim();
+  //     case 3:
+  //       return !!formData.email.trim() && /^\S+@\S+\.\S+$/.test(formData.email);
+  //     case 4:
+  //       return !!formData.destino.trim();
+  //     case 5:
+  //       return !!formData.grupoFamiliar.trim();
+  //     case 6:
+  //       return formData.servicios.length > 0;
+  //     case 7:
+  //       return formData.aceptaTerminos;
+  //     default:
+  //       return true;
+  //   }
+  // };
+
+  // Variantes de animación
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        when: 'beforeChildren',
+        staggerChildren: 0.1,
+        duration: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  // Renderizado condicional basado en el paso actual
+  const renderStep = (): React.ReactElement => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="text-center">
+          <motion.div 
+            key="step-0"
+            variants={itemVariants}
+            className="text-center"
+          >
             <img 
               src="https://bamuba.tur.ar/wp-content/uploads/2025/06/bamuba-logo-recto-new.png" 
               alt="Bamuba Turismo" 
@@ -90,11 +201,15 @@ function App() {
             >
               Comenzar
             </button>
-          </div>
+          </motion.div>
         );
       case 1:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-1"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">Por medio de la presente quien suscribe, la Sra./ el Sr.</h2>
             <div className="mb-6">
               <input
@@ -124,11 +239,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 2:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-2"
+            variants={itemVariants}
+            className="w-full min-w-[500px] mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">Ingrese su número de DNI:</h2>
             <div className="mb-6">
               <input
@@ -158,11 +277,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 3:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-3"
+            variants={itemVariants}
+            className="w-full min-w-[500px] mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">Con su correo electrónico:</h2>
             <div className="mb-6">
               <input
@@ -192,11 +315,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 4:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-4"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">A todos los fines que surjan del contrato de intermediación en:</h2>
             <div className="mb-6">
               <input
@@ -226,11 +353,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 5:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-5"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">
               Vengo a solicitar a la Agencia de Viajes BAMUBA EMPRESA DE VIAJES Y
               TURISMO – Legajo 19.771 preste sus servicios de intermediación a favor de mi persona y mi grupo familiar / de viaje:
@@ -263,11 +394,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 6:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-6"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">A fin de poder adquirir los siguientes servicios turísticos (marque los que correspondan):</h2>
             <div className="space-y-4 mb-8">
               {serviciosOptions.map((servicio) => (
@@ -300,11 +435,15 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 7:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-7"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">Términos y condiciones</h2>
             <div className="prose prose-lg mb-8">
               <p className="mb-4">
@@ -359,24 +498,52 @@ function App() {
                 Siguiente
               </button>
             </div>
-          </div>
+          </motion.div>
         );
       case 8:
         return (
-          <div className="w-full mx-auto">
+          <motion.div 
+            key="step-8"
+            variants={itemVariants}
+            className="w-full mx-auto"
+          >
             <h2 className="text-2xl font-semibold mb-6">Firma digital</h2>
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Firma</label>
-                <input
-                  type="text"
-                  name="firma"
-                  value={formData.firma}
-                  onChange={handleInputChange}
-                  className="w-full p-3 text-lg border-b-2 border-gray-300 focus:border-[#604A40] focus:ring-0 focus:outline-none"
-                  placeholder="Firme aquí"
-                  required
+              <div className="signature-container" style={{ border: '1px solid #e2e8f0', borderRadius: '0.5rem', width: '100%' }}>
+                <SignatureCanvas
+                  ref={signatureRef}
+                  penColor="#000000"
+                  canvasProps={{
+                    className: 'signature-canvas',
+                    style: {
+                      width: '100%',
+                      height: '200px',
+                      borderRadius: '0.5rem'
+                    }
+                  }}
+                  onEnd={handleEnd}
+                  clearOnResize={false}
                 />
+              </div>
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  style={{
+                    background: '#f8f9fa',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '0.375rem',
+                    padding: '0.5rem 1rem',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    color: '#4a5568'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e9ecef'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                  className="clear-signature"
+                >
+                  Limpiar firma
+                </button>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Aclaración</label>
@@ -412,36 +579,44 @@ function App() {
               </button>
               <button
                 type="submit"
-                disabled={!formData.firma.trim() || !formData.aclaracion.trim()}
-                className={`px-6 py-2 rounded-lg ${formData.firma.trim() && formData.aclaracion.trim() ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                disabled={isSignatureEmpty || !formData.aclaracion.trim()}
+                className={`px-6 py-2 rounded-lg ${
+                  !isSignatureEmpty && formData.aclaracion.trim() 
+                    ? 'bg-green-600 text-white hover:bg-green-700' 
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 Enviar solicitud
               </button>
             </div>
-            <div className="w-full flex justify-between items-center gap-[20px]">
-              <div className="flex justify-end items-center w-[50%]">
+            <div className="w-full flex justify-between items-center gap-[20px] mt-[20px]">
+              <div className="flex justify-end items-center w-[40%]">
               <img 
                 src="https://bamuba.tur.ar/wp-content/uploads/2025/06/bamuba-logo-recto-new.png" 
                 alt="Bamuba Turismo" 
-                className="w-[25%] m-0 h-16"
+                className="w-[50%] m-0 h-16"
               />
               <img 
                 src="https://bamuba.tur.ar/wp-content/uploads/2025/05/qr.png" 
                 alt="QR" 
-                className="w-[10%] m-0 h-16"
+                className="w-[25%] m-0 h-16"
               />                
               </div>
 
-            <div className="flex flex-col justify-center items-start w-[50%]">
+            <div className="flex flex-col justify-center items-start w-[60%]">
               <p>©Todos los derechos reservados</p>
               <p>Bamuba Empresa de Viajes y Turismo – Legajo 19.771</p>
             </div>
             </div>
-          </div>
+          </motion.div>
         );
       case 9:
         return (
-          <div className="text-center py-12">
+          <motion.div 
+            key="step-9"
+            variants={itemVariants}
+            className="text-center py-12"
+          >
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -470,7 +645,7 @@ function App() {
             >
               Volver al inicio
             </button>
-          </div>
+          </motion.div>
         );
       default:
         return <div>Paso no encontrado</div>;
@@ -479,11 +654,20 @@ function App() {
 
   return (
     <div className="w-full flex items-center min-w-[100vw] justify-center p-4">
-      <div className="form-container rounded-2xl shadow-lg w-full mr-[20px] ml-[20px] max-w-[100vw] min-h-[536px] p-8">
-        <form onSubmit={handleSubmit} id="form-contract">
-          {renderStep()}
-        </form>
-      </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`step-${currentStep}`}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+          className="form-container rounded-2xl shadow-lg w-full max-w-4xl min-h-[536px] p-8 bg-white"
+        >
+          <form onSubmit={handleSubmit} id="form-contract" className="h-full">
+            {renderStep()}
+          </form>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
