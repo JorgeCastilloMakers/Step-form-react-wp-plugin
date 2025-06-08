@@ -12,33 +12,16 @@ declare global {
   }
 }
 
-// Configuración de animaciones
-const containerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.1,
-      duration: 0.3
-    }
-  },
-  exit: { 
-    opacity: 0, 
-    y: -20,
-    transition: { duration: 0.3 } 
+// Declaración para TypeScript para acceder a bamubaFormData global
+declare global {
+  interface Window {
+    bamubaFormData?: {
+      apiUrl: string;
+      nonce: string;
+    };
   }
-};
+}
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.3 } 
-  }
-};
 
 type FormData = {
   nombreApellido: string;
@@ -125,35 +108,70 @@ function App() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulario enviado:', formData);
-    // Aquí podrías agregar la lógica para enviar los datos al servidor
+    
+    try {
+      let apiUrl = '/wp-json';
+      let nonce = '';
+      
+      if (typeof window.bamubaFormData !== 'undefined') {
+        apiUrl = window.bamubaFormData.apiUrl;
+        nonce = window.bamubaFormData.nonce;
+      }
+      
+      const formDataToSend = {
+        ...formData,
+        firma: signatureRef.current?.toDataURL() || ''
+      };
+      
+      try {
+        const testResponse = await fetch(`${apiUrl}bamuba-form/v1/test`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        await testResponse.json();
+      } catch (testError) {
+        console.error('Error al probar el endpoint:', testError);
+      }
+      
+      const response = await fetch(`${apiUrl}bamuba-form/v1/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': nonce
+        },
+        body: JSON.stringify({
+          formData: formDataToSend
+        })
+      });
+            
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Respuesta de error completa:', errorText);
+        throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+
+      if (result.success) {
+        setCurrentStep(9);
+      } else {
+        throw new Error(result.message || 'Error al enviar el formulario');
+      }
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+      alert(`Ocurrió un error al enviar el formulario: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+    }
   };
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
-  // const isStepValid = () => {
-  //   switch (currentStep) {
-  //     case 1:
-  //       return !!formData.nombreApellido.trim();
-  //     case 2:
-  //       return !!formData.dni.trim();
-  //     case 3:
-  //       return !!formData.email.trim() && /^\S+@\S+\.\S+$/.test(formData.email);
-  //     case 4:
-  //       return !!formData.destino.trim();
-  //     case 5:
-  //       return !!formData.grupoFamiliar.trim();
-  //     case 6:
-  //       return formData.servicios.length > 0;
-  //     case 7:
-  //       return formData.aceptaTerminos;
-  //     default:
-  //       return true;
-  //   }
-  // };
+
 
   // Variantes de animación
   const containerVariants = {
@@ -189,7 +207,7 @@ function App() {
               alt="Bamuba Turismo" 
               className="w-[30%] mx-auto mb-8 h-16"
             />
-            <h1 className="text-3xl font-bold mb-6">Requerimiento para la prestación de servicios de intermediación</h1>
+            <h1 className="text-2xl md:text-3xl font-bold mb-6">Requerimiento para la prestación de servicios de intermediación</h1>
             <p className="text-gray-700 mb-8">
               El siguiente formulario es para completar el requerimiento para la prestación de servicios de intermediación y condiciones
               generales complementarias del contrato de servicios turísticos según la Federación
