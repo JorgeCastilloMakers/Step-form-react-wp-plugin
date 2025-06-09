@@ -37,6 +37,24 @@ add_action('plugins_loaded', function () {
  * Pasar datos necesarios a JavaScript
  */
 function bamuba_form_localize_script() {
+    // Verificar si estamos en una página donde el shortcode está presente
+    global $post;
+    $should_load = false;
+    
+    if (is_singular() && $post && has_shortcode($post->post_content, 'bamuba_form')) {
+        $should_load = true;
+    }
+    
+    // También cargar si estamos en la página específica 'contrato'
+    if (is_page('contrato')) {
+        $should_load = true;
+    }
+    
+    // Solo continuar si debemos cargar el script
+    if (!$should_load) {
+        return;
+    }
+    
     // Asegurarse de que el script esté registrado antes de localizarlo
     if (!wp_script_is('react-script', 'registered')) {
         wp_register_script('react-script', plugin_dir_url(__FILE__) . 'public/assets/main.js', array(), '1.0.0', true);
