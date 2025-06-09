@@ -75,8 +75,17 @@ class WP_React_Form_API {
         $form_data = $params['formData'];
         error_log('Datos del formulario: ' . print_r($form_data, true));
         
-        // Email de destino
-        $to = 'j.a.castillo.jc@gmail.com'; // Email para pruebas
+        // Email de destino principal
+        $to = 'info@bamuba.tur.ar';
+        
+        // Si existe un email en el formulario, también enviar una copia al cliente
+        $client_email = isset($form_data['email']) ? sanitize_email($form_data['email']) : '';
+        $cc = '';
+        
+        if (!empty($client_email)) {
+            error_log('Enviando copia del correo al cliente: ' . $client_email);
+            $cc = $client_email;
+        }
         
         // Asunto del correo
         $subject = 'Nueva solicitud de servicios - Bamuba Turismo';
@@ -108,8 +117,8 @@ class WP_React_Form_API {
             } elseif ($key === 'aceptaTerminos') {
                 $value = $value ? 'Sí' : 'No';
             } elseif ($key === 'firma' && !empty($value)) {
-                // Si es una firma en base64, mostrar un texto en lugar de la imagen completa
-                $value = '[Firma digital incluida]';
+                // Si es una firma en base64, incluir la imagen en el correo
+                $value = '<img src="' . $value . '" alt="Firma digital" style="max-width: 300px; border: 1px solid #ddd;" />';
             }
             
             $message .= '<tr>';
@@ -127,6 +136,11 @@ class WP_React_Form_API {
             'Content-Type: text/html; charset=UTF-8',
             'From: Bamuba Turismo <noreply@bamuba.tur.ar>'
         );
+        
+        // Agregar CC si existe un email de cliente
+        if (!empty($cc)) {
+            $headers[] = 'Cc: ' . $cc;
+        }
         
         // Enviar el correo
         $sent = wp_mail($to, $subject, $message, $headers);

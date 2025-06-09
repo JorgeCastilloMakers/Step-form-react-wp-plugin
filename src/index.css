@@ -33,6 +33,7 @@ body {
   place-items: center;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
+  position: relative;
 }
 
 h1 {

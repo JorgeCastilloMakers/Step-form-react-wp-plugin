@@ -2,6 +2,9 @@ import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
 import SignatureCanvas from 'react-signature-canvas';
+import { ChevronLeft } from 'lucide-react';
+
+
 
 // Componente Loader
 const Loader = () => (
@@ -12,7 +15,12 @@ const Loader = () => (
     </div>
   </div>
 );
-
+// back to home button
+const BackToHomeButton = () => (
+  <a href="/" rel="noopener noreferrer" className="fixed bottom-4 left-4 z-50 bg-white !border-none text-[#604A40] hover:!bg-[#604A40] hover:!text-white px-4 py-2 rounded-lg">
+    <ChevronLeft />
+  </a>
+);
 // Asegurarse de que React esté en el ámbito global
 declare global {
   namespace JSX {
@@ -675,6 +683,7 @@ function App() {
                   aclaracion: '',
                   fechaLugar: `${new Date().toLocaleDateString('es-AR')}, Buenos Aires`
                 });
+                window.location.href = '/';
               }}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
             >
@@ -688,7 +697,10 @@ function App() {
   };
 
   return (
-    <div className="w-full flex items-center min-w-[100vw] justify-center p-4">
+    <>
+      {isLoading && <Loader />}
+      <BackToHomeButton />
+      <div className="w-full flex items-center min-w-[100vw] justify-center p-4">
       <AnimatePresence mode="wait">
         <motion.div
           key={`step-${currentStep}`}
@@ -704,6 +716,7 @@ function App() {
         </motion.div>
       </AnimatePresence>
     </div>
+    </>
   );
 }
 
