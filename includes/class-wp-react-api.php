@@ -134,7 +134,7 @@ class WP_React_Form_API {
         // Configurar headers para HTML
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: Bamuba Turismo <noreply@bamuba.tur.ar>'
+            'From: Bamuba Turismo <info@bamuba.tur.ar>'
         );
         
         // Agregar CC si existe un email de cliente
